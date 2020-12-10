@@ -1,20 +1,55 @@
-﻿// PRL6.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿#include <iostream>
+#include <cmath>
+using namespace std;
 
-#include <iostream>
+const int N = 100000;
+const int M = 50000;
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	const int numOfThreads = 4;
+	int arr[N];
+	int arr2[M];
+	double partSum;
+	double sum = 0;
+
+	for (int i = 0; i < N; i++) {
+		arr[i] = i;
+	}
+
+	int numbOfThreadElement = ceil(N * 1.0 / numOfThreads);
+
+	for (int i = 0; i < numOfThreads; i++) {
+		partSum = 0;
+		for (int j = i * numbOfThreadElement; j < (i + 1) * numbOfThreadElement; j++) {
+			partSum += arr[j];
+		}
+		sum += partSum;
+	}
+	cout << "First sum is >> " << sum << endl;
+
+	int activeSize = M;
+	int lastSize = M;
+
+	for (int i = 0; i < M; i++) {
+		arr2[i] = i;
+	}
+
+	do {
+		if (activeSize % 2 == 0) {
+			activeSize /= 2;
+		}
+		else {
+			activeSize = activeSize / 2 + 1;
+		}
+
+		for (int i = 0; i < activeSize; i++) {
+			if (i != lastSize - i - 1) {
+				arr2[i] += arr2[lastSize - i - 1];
+				arr2[lastSize - i - 1] = 0;
+			}
+		}
+		lastSize = activeSize;
+	} while (activeSize > 1);
+	cout << "Second sum is >> " << arr2[0] << endl;
 }
-
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.

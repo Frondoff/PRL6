@@ -4,18 +4,17 @@ using namespace std;
 
 const int N = 100000;
 const int M = 50000;
+const int numOfThreads = 4;
 
-int main()
-{
-	const int numOfThreads = 4;
-	int arr[N];
-	int arr2[M];
-	double partSum;
-	double sum = 0;
-
-	for (int i = 0; i < N; i++) {
+void initArray(int arr[], int size) {
+	for (int i = 0; i < size; i++) {
 		arr[i] = i;
 	}
+}
+
+double findFirstSum(int arr[]) {
+	double partSum;
+	double sum = 0;
 
 	int numbOfThreadElement = ceil(N * 1.0 / numOfThreads);
 
@@ -26,14 +25,12 @@ int main()
 		}
 		sum += partSum;
 	}
-	cout << "First sum is >> " << sum << endl;
+	return sum;
+}
 
+int findSecondSum(int arr[]) {
 	int activeSize = M;
 	int lastSize = M;
-
-	for (int i = 0; i < M; i++) {
-		arr2[i] = i;
-	}
 
 	do {
 		if (activeSize % 2 == 0) {
@@ -45,11 +42,23 @@ int main()
 
 		for (int i = 0; i < activeSize; i++) {
 			if (i != lastSize - i - 1) {
-				arr2[i] += arr2[lastSize - i - 1];
-				arr2[lastSize - i - 1] = 0;
+				arr[i] += arr[lastSize - i - 1];
+				arr[lastSize - i - 1] = 0;
 			}
 		}
 		lastSize = activeSize;
 	} while (activeSize > 1);
-	cout << "Second sum is >> " << arr2[0] << endl;
+	return arr[0];
+}
+
+int main()
+{
+	int arr[N];
+	int arr2[M];
+	
+	initArray(arr, N);
+	cout << "First sum is >> " << findFirstSum(arr) << endl;
+
+	initArray(arr2, M);
+	cout << "Second sum is >> " << findSecondSum(arr2) << endl;
 }
